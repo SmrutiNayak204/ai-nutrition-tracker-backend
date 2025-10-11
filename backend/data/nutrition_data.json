@@ -1,0 +1,21 @@
+{
+  "Biscuit": { "calories": 353, "protein": 7.0, "fat": 16.3, "carbs": 44.6, "fiber": 1.5 },
+  "Boiled Eggs": { "calories": 155, "protein": 12.58, "fat": 10.61, "carbs": 1.12, "fiber": 0.0 },
+  "Burger": { "calories": 257, "protein": 11.62, "fat": 9.22, "carbs": 32.31, "fiber": 1.0 },
+  "Chicken Biriyani": { "calories": 163, "protein": 8.5, "fat": 7.4, "carbs": 16.6, "fiber": 0.9 },
+  "Chocolate Bars": { "calories": 546, "protein": 4.9, "fat": 31.0, "carbs": 61.0, "fiber": 3.4 },
+  "Egg Omelette": { "calories": 153, "protein": 10.62, "fat": 12.02, "carbs": 0.69, "fiber": 0.0 },
+  "French Fries": { "calories": 312, "protein": 3.0, "fat": 15.0, "carbs": 41.0, "fiber": 3.0 },
+  "Ice-cream": { "calories": 207, "protein": 3.5, "fat": 11.0, "carbs": 23.0, "fiber": 0.0 },
+  "Milk Tea": { "calories": 44, "protein": 1.0, "fat": 2.0, "carbs": 5.0, "fiber": 0.0 },
+  "Pizza": { "calories": 266, "protein": 11.0, "fat": 9.7, "carbs": 31.0, "fiber": 2.0 },
+  "Potato Chips": { "calories": 536, "protein": 7.0, "fat": 35.0, "carbs": 53.0, "fiber": 4.0 },
+  "Salad": {
+  "types": {
+    "Vegetable Salad": { "calories": 152, "protein": 2.0, "fat": 10.0, "carbs": 12.0, "fiber": 4.0 },
+    "Fruit Salad": { "calories": 180, "protein": 1.5, "fat": 1.0, "carbs": 45.0, "fiber": 4.0 },
+    "Chicken Salad": { "calories": 310, "protein": 26.0, "fat": 18.0, "carbs": 9.0, "fiber": 3.0 },
+    "Paneer Salad": { "calories": 285, "protein": 15.0, "fat": 20.0, "carbs": 6.0, "fiber": 2.5 }
+  }
+}
+}
