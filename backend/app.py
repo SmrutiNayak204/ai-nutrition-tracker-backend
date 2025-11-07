@@ -37,9 +37,7 @@ with open(DATA_PATH, "r") as f:
 # ==============================================
 # 🧠 Import Prediction Model
 # ==============================================
-import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), "model"))
-from predict_food import predict_food
+# from predict_food import predict_food
 
 # ==============================================
 # 👤 Signup Route (keeps behavior but /register will be main)
@@ -321,5 +319,6 @@ if __name__ == "__main__":
     print("✅ AI Nutrition Tracker backend running...")
     app.run(debug=True)
 # ==============================================
+
 
 
