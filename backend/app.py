@@ -17,8 +17,19 @@ reset_daily_calories()
 # ⚙️ Flask App Setup
 # ==============================================
 app = Flask(__name__)
-CORS(app)
 
+# ==============================================
+# 🌐 CORS Configuration (important change here)
+# ==============================================
+# Allow only your Netlify frontend to access this backend.
+# On Render, add this environment variable:
+# FRONTEND_URL = https://ai-nutritiontracker.netlify.app
+FRONTEND_URL = os.getenv("FRONTEND_URL", "*")
+CORS(app, origins=[FRONTEND_URL])
+
+# ==============================================
+# 📁 Folder Setup
+# ==============================================
 # If app.py is inside backend/, BASE_DIR will be backend/.
 BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_FOLDER = BASE_DIR / "uploads"
@@ -38,9 +49,8 @@ with open(DATA_PATH, "r") as f:
 # 🧠 Import Prediction Model
 # ==============================================
 # from predict_food import predict_food
-
 # ==============================================
-# 👤 Signup Route (keeps behavior but /register will be main)
+# 👤 Signup Route
 # ==============================================
 @app.route("/signup", methods=["POST"])
 def signup():
@@ -203,14 +213,12 @@ def upload_file():
     # Lookup nutrition; handle missing gracefully
     nutrition = nutrition_data.get(predicted_class)
     if not nutrition:
-        # Clean up file and return not found
         try:
             os.remove(filepath)
         except Exception:
             pass
         return jsonify({"error": f"Nutrition info for '{predicted_class}' not found in data."}), 404
 
-    # For Salad types stored under "types"
     if predicted_class == "Salad" and "types" in nutrition:
         nutrition_info = nutrition["types"]
     else:
@@ -218,25 +226,16 @@ def upload_file():
 
     conn = get_connection()
     c = conn.cursor()
-
-    # Get user
     c.execute("SELECT id, daily_target_calories, calories_today FROM Users WHERE name=?", (name,))
     user = c.fetchone()
     if not user:
         conn.close()
-        try:
-            os.remove(filepath)
-        except Exception:
-            pass
+        os.remove(filepath)
         return jsonify({"error": "User not found"}), 404
 
     user_id, daily_target, calories_today = user
+    calories_today = calories_today or 0
 
-    # Initialize if null
-    if calories_today is None:
-        calories_today = 0
-
-    # Add food log: if nutrition_info is a dict with calories, log it
     if isinstance(nutrition_info, dict) and "calories" in nutrition_info:
         try:
             c.execute("""INSERT INTO Food_Log (user_id, date, food_name, calories, protein, fat, carbs, fiber)
@@ -250,17 +249,9 @@ def upload_file():
             conn.commit()
         except Exception as e:
             conn.close()
-            try:
-                os.remove(filepath)
-            except Exception:
-                pass
+            os.remove(filepath)
             return jsonify({"error": f"Database logging failed: {e}"}), 500
-    else:
-        # For complex nutrition_info (like Salad types), do not update calories_today automatically
-        # You may choose to pick a default type or ask user to choose one in future UI updates.
-        pass
 
-    # Fetch weight & height to compute BMI (optional)
     c.execute("SELECT weight, height FROM Users WHERE name=?", (name,))
     weight_height = c.fetchone()
     bmi = None
@@ -271,16 +262,9 @@ def upload_file():
         except Exception:
             bmi = None
 
-    # Diet suggestion: pass today's total calories (function expects list of dicts)
     suggestions = suggest_diet([{"calories": calories_today}], daily_target, bmi)
-
     conn.close()
-
-    # Remove uploaded file
-    try:
-        os.remove(filepath)
-    except Exception:
-        pass
+    os.remove(filepath)
 
     return jsonify({
         "predicted_food": predicted_class,
@@ -292,7 +276,7 @@ def upload_file():
     })
 
 # ==============================================
-# 📊 Weekly Data (for Chart.js)
+# 📊 Weekly Data
 # ==============================================
 @app.route("/weekly_data", methods=["GET"])
 def weekly_data():
@@ -317,8 +301,4 @@ def weekly_data():
 # ==============================================
 if __name__ == "__main__":
     print("✅ AI Nutrition Tracker backend running...")
-    app.run(debug=True)
-# ==============================================
-
-
-
+    app.run(host="0.0.0.0", port=5000, debug=True)
